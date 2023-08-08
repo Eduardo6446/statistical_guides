@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+<section class="hero">
+    <div class="hero-text">
+        <br><br><br>
+        <h5>Lorem ipsum dolor sit amet consectetur adipisicing elit</h5>
+
+        <h4>Lorem ipsum, dolor sit amet consectetur</h4>
+
+        <h1>yo</h1>
+
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque atque aspernatur ducimus temporibus dicta neque veritatis reprehenderit molestias voluptatum? Fuga expedita nobis esse placeat deleniti illum incidunt, vel in reprehenderit.</p>
+        
+
+        <form action="/" method="post" enctype="multipart/form-data">
+            <a href="#" class="ctaa"><i class="ri-file-line"></i><input type="file" name="file" id="file" accept=".xlsx"></a>
+            <button class="ctaa" type="submit">subir<i class="ri-send-plane-line"></i></button>
+        </form>
+    </div>
+
+    <div class="hero-img">
+        <img src="static/images/yop.png" alt="">
+    </div>
+</section>
+
+
+{% if dataframe is not none %}
+    <section>
+        <h2>Datos del archivo Excel:</h2>
+<table>
+    <thead>
+        <tr>
+            {% for col in dataframe.columns %}
+            <th style="color: white;">{{ col }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in dataframe.values %}
+        <tr>
+            {% for value in row %}
+            <td style="color: white;">{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    </section>
+{% endif %}
+
+
+{% endblock %}
+
