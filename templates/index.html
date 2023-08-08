@@ -1,9 +1,5 @@
 {% extends "layout.html" %}
 
-{% block title %}
-    Log In
-{% endblock %}
-
 {% block main %}
 <section class="hero">
     <div class="hero-text">
@@ -29,28 +25,64 @@
 </section>
 
 
+<!--EXCEL SECTION-->
+
 {% if dataframe is not none %}
-    <section>
+
+<section>
+    <div >
         <h2>Datos del archivo Excel:</h2>
-<table>
-    <thead>
-        <tr>
-            {% for col in dataframe.columns %}
-            <th style="color: white;">{{ col }}</th>
-            {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for row in dataframe.values %}
-        <tr>
-            {% for value in row %}
-            <td style="color: white;">{{ value }}</td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-    </section>
+    </div>
+
+    <div class="excel_section">
+        <table>
+            <thead>
+                <tr>
+                    {% for col in dataframe.columns %}
+                    
+                    <th style="color: white;">{{ col }}</th>
+                    
+                    {% endfor %}
+                </tr>
+            </thead>
+    
+            <tbody>
+                {% for row in dataframe.values %}
+                <tr>
+                    {% for value in row %}
+
+                    <td style="color: white;">{{ value }}</td>
+                    
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div>
+            <h2>
+                n: {{n}}
+            </h2>
+            <h2>
+                max: {{max}}
+            </h2>
+            <h2>
+                min: {{min}}
+            </h2>
+            <h2>
+                rango:{{rango}}
+            </h2>
+            <h2>
+                k: {{k}}
+            </h2>
+            <h2>
+                L:{{L}}
+            </h2>
+
+        </div>
+    
+    </div>
+</section>
 {% endif %}
 
 

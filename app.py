@@ -18,25 +18,73 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 @app.route('/' ,methods=["GET", "POST"])
 def index():
     if request.method == "GET":
-        print("\nholi")
-        return render_template("index.html",dataframe=None)
+        return render_template("index.html",dataframe=None,max =None,min=None,rango=None,n=None,k=None,L=L)
     else:
-        print("\nPOST")
-
+        # Tomamos el archivo del input
         archivo = request.files['file']
+
+        # validamos si se seleccionó
         if archivo.filename == '':
             return "No se ha seleccionado ningún archivo."
 
+        #si hay un archivo, lo guardamos en la carpeta uploads y lo guardamos en una variable
         if archivo:
             filename = secure_filename(archivo.filename)
             archivo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             archivo_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             df = pd.read_excel(archivo_path)
-            print(df)  #
-            
+
+        #Reemplazamos las comas por puntos
+        df.replace(',', '.', regex=True, inplace=True)
+        df = df.apply(pd.to_numeric)
+
+        #Formulas
+        #Numero de datos
+        n = df.count().sum()
+
+        #Valor maximo    
+        max = df.max().max()
+
+        #Valor minimo
+        min = df.min().min()
+
+        #Rango
+        rango = max - min
+
+        #Clases o intervalos
+        k = np.sqrt(n)
+
+        #Redondeado al entero mas cercano
+        k = round(k)
+
+        #Longitud
+        L = rango / k
+
+        # Valor específico para el que deseas calcular la frecuencia 
+        valor_especifico = 5 
+
+        # Calcula la frecuencia absoluta del valor específico en la columna
+        ##frecuencia_absoluta = df['columna_name'].value_counts()[valor_especifico]
+
+        # Calcula el número total de observaciones en la columna
+        ##total_observaciones = len(df['columna_name'])
+
+        # Calcula la frecuencia relativa
+        ##frecuencia_relativa = frecuencia_absoluta / total_observaciones
+
+        # Calcula la frecuencia absoluta de cada valor en la columna y suma acumulada
+        ##frecuencia_acumulada_absoluta = df['columna_name'].value_counts().sort_index().cumsum()
+
+        # Obtén la frecuencia absoluta acumulada para el valor específico
+        ##frecuencia_absoluta_acumulada_valor = frecuencia_acumulada_absoluta.get(valor_especifico, 0)
+
+        # Calcula la frecuencia relativa acumulada dividiendo por el total de observaciones
+
+        ##total_observaciones = len(df['columna_name'])
+        ##frecuencia_relativa_acumulada_valor = frecuencia_absoluta_acumulada_valor / total_observaciones
+
         
-        
-        return render_template('index.html',dataframe=df)
+        return render_template('index.html',dataframe=df, max=max,min=min,rango=rango,n=n,k=k,L=L)
 
 @app.route('/plot')
 def plot():
