@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<br><br><br>
+
+<div class="container">
+    <table border="1" class="table">
+        <thead class="table-success">
+            <tr>
+                <th>Numero</th>
+                <th>Clase</th>
+                <th>Marca</th>
+                <th>f</th>
+                <th>F</th>
+                <th>f/n</th>
+                <th>F/n</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index, row in table.iterrows() %}
+                <tr>
+                    <td>{{row['Numero']}}</td>
+                    <td>{{ row['Clase'] }}</td>
+                    <td>{{ row['Marcas de clase'] }}</td>
+                    <td>{{ row['Frecuencia absoluta'] }}</td>
+                    <td>{{ row['Frecuencia absoluta acumulada'] }}</td>
+                    <td>{{ row['Frecuencia relativa'] }}</td>
+                    <td>{{ row['Frecuencia relativa acumulada'] }}</td>
+
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

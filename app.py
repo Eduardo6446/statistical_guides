@@ -1,4 +1,5 @@
 
+from math import ceil, floor, log10
 import os
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 import io
@@ -14,77 +15,121 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+#DataFrame
+table = pd.DataFrame(columns=[
+    'Numero',
+    'Clase',
+    'Marcas de clase',
+    'Frecuencia absoluta',
+    'Frecuencia absoluta acumulada',
+    'Frecuencia relativa',
+    'Frecuencia relativa acumulada',
+])
+
+
+#datos
+data = []
+
+
+
+#Listas
+
+
+#Frecuencia absoluta
+fabs  = []
+
+#Frecuencia absoluta acumulada
+fabsacum  = []
+
+#Frecuencia relativa
+frel = []
+
+#Frecuencia relativa acumulada
+frelacum = []
+
+#marcas de clase
+marcas = []
 
 @app.route('/' ,methods=["GET", "POST"])
 def index():
     if request.method == "GET":
-        return render_template("index.html",dataframe=None,max =None,min=None,rango=None,n=None,k=None,L=L)
+        return render_template("index.html")
     else:
         # Tomamos el archivo del input
-        archivo = request.files['file']
-
-        # validamos si se seleccionó
-        if archivo.filename == '':
-            return "No se ha seleccionado ningún archivo."
-
-        #si hay un archivo, lo guardamos en la carpeta uploads y lo guardamos en una variable
-        if archivo:
-            filename = secure_filename(archivo.filename)
-            archivo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            archivo_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            df = pd.read_excel(archivo_path)
-
-        #Reemplazamos las comas por puntos
-        df.replace(',', '.', regex=True, inplace=True)
-        df = df.apply(pd.to_numeric)
-
-        #Formulas
-        #Numero de datos
-        n = df.count().sum()
-
-        #Valor maximo    
-        max = df.max().max()
-
-        #Valor minimo
-        min = df.min().min()
-
-        #Rango
-        rango = max - min
-
-        #Clases o intervalos
-        k = np.sqrt(n)
-
-        #Redondeado al entero mas cercano
-        k = round(k)
-
-        #Longitud
-        L = rango / k
-
-        # Valor específico para el que deseas calcular la frecuencia 
-        valor_especifico = 5 
-
-        # Calcula la frecuencia absoluta del valor específico en la columna
-        ##frecuencia_absoluta = df['columna_name'].value_counts()[valor_especifico]
-
-        # Calcula el número total de observaciones en la columna
-        ##total_observaciones = len(df['columna_name'])
-
-        # Calcula la frecuencia relativa
-        ##frecuencia_relativa = frecuencia_absoluta / total_observaciones
-
-        # Calcula la frecuencia absoluta de cada valor en la columna y suma acumulada
-        ##frecuencia_acumulada_absoluta = df['columna_name'].value_counts().sort_index().cumsum()
-
-        # Obtén la frecuencia absoluta acumulada para el valor específico
-        ##frecuencia_absoluta_acumulada_valor = frecuencia_acumulada_absoluta.get(valor_especifico, 0)
-
-        # Calcula la frecuencia relativa acumulada dividiendo por el total de observaciones
-
-        ##total_observaciones = len(df['columna_name'])
-        ##frecuencia_relativa_acumulada_valor = frecuencia_absoluta_acumulada_valor / total_observaciones
+        input = request.form.get("datos")
+        # validamos si no esta vacio
+        if not input:
+            print("\nNo hay datos\n")
+            return render_template('index.html')
 
         
-        return render_template('index.html',dataframe=df, max=max,min=min,rango=rango,n=n,k=k,L=L)
+        valores_separados = input.split()  # Dividir los valores por espacios
+
+        for valor_str in valores_separados:
+            try:
+                valor_numerico = float(valor_str)
+                data.append(valor_numerico)
+            except ValueError:
+                return render_template('index.html')
+            
+        MinValue = min(data)
+        print(MinValue)
+        Total = len(data)
+        print(Total)
+        r =  max(data)-min(data)
+        print(r)
+
+        #Redondear al entero mas cercano
+        linferior = floor(MinValue)
+        Total = len(data)
+
+                
+        # Ciclo que recorre los intervalos
+        intervalos = 1 + (3.322 * log10(Total))
+        print(intervalos)
+        k = round(intervalos)
+        print(k)
+        lon = r / k
+        print(lon)
+
+        for i in range(1, round(intervalos)+1):
+
+            # Calculando el limite superior y redondeandolo a su próximo más cercano
+
+            lsuperior = ceil(linferior + lon)
+
+            # Añadiendo a la lista las marcas de clase
+
+            marcas.append((linferior + lsuperior) / 2)
+
+            # Añadiendo a la lista las frecuencias absolutas
+            fabs.append(freqabs (data, linferior, lsuperior))
+
+            # Añadiendo a la lista Las frecuencias absolutas acumuladas 
+            fabsacum.append(freqabsacum(fabs))
+
+            #Añadiendo a la lista Las frecuencias relativas
+
+            frel.append(freqrel(fabs))
+
+            # Añadiendo a la lista las frecuencias relativas acumuladas 
+            frelacum.append(freqrel(fabsacum))
+
+            #Añadiendole valores a la tabla
+
+            table.loc[i] = [i,f"[{linferior}, {lsuperior})", (linferior + lsuperior) / 2, freqabs(data, linferior, lsuperior), freqabsacum(fabs), freqrel(fabs), freqrel(fabsacum) ]
+
+            #Modificando en valor del límite inferior en cada iteración
+
+            linferior = lsuperior
+
+            
+        print(table)
+        return render_template('result.html',table=table)
+
+        
+
+
 
 @app.route('/plot')
 def plot():
@@ -105,6 +150,45 @@ def plot():
     plt.close()
 
     return render_template('plot.html', img_base64=img_base64)
+
+
+# Funcion para contar numeros en un rango (Frecuencia absoluta)
+
+def freqabs(lista, linferior, lsuperior):
+    # Filtrar elementos en la lista que coincidan en los intervalos Y contarlos
+    return len([x for x in lista if x >= linferior and x <= lsuperior])
+
+# Funcion para acumular freq absolutas
+
+def freqabsacum(lista):
+    acumulado = 0
+    # Recorriendo la lista de freq absolutas
+    for i in lista:
+        # Sumando la freq anterior
+        acumulado = acumulado + i
+    # Retornando el valor 
+    return acumulado
+
+# Funcion que calcula la frecuencia relativa / frecuencia relativa acumulada
+
+def freqrel(lista):
+    # Recorriendo la lista de freq absolutas / absoluta acumulada
+    for i in lista: 
+        # Calculando la frecuencia relativa
+        freqactual = i / 40
+    # Retornando el valor
+    return freqactual
+
+# Funcion para calcular la freq porcentual / freq porcentual acumulada
+def freqpor(lista):
+
+    # Recorriendo la lista de freq relativas / freq relativa acumulada
+    for i in lista:
+        # Calculando la frecuencia porcentual
+        freqactual = i * 100
+    # Retornando el valor
+    return freqactual
+
 
 
 

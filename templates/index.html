@@ -1,90 +1,33 @@
 {% extends "layout.html" %}
 
 {% block main %}
-<section class="hero">
-    <div class="hero-text">
-        <br><br><br>
-        <h5>Lorem ipsum dolor sit amet consectetur adipisicing elit</h5>
-
-        <h4>Lorem ipsum, dolor sit amet consectetur</h4>
-
-        <h1>yo</h1>
-
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque atque aspernatur ducimus temporibus dicta neque veritatis reprehenderit molestias voluptatum? Fuga expedita nobis esse placeat deleniti illum incidunt, vel in reprehenderit.</p>
-        
-
-        <form action="/" method="post" enctype="multipart/form-data">
-            <a href="#" class="ctaa"><i class="ri-file-line"></i><input type="file" name="file" id="file" accept=".xlsx"></a>
-            <button class="ctaa" type="submit">subir<i class="ri-send-plane-line"></i></button>
-        </form>
-    </div>
-
-    <div class="hero-img">
-        <img src="static/images/yop.png" alt="">
-    </div>
-</section>
-
-
-<!--EXCEL SECTION-->
-
-{% if dataframe is not none %}
-
-<section>
-    <div >
-        <h2>Datos del archivo Excel:</h2>
-    </div>
-
-    <div class="excel_section">
-        <table>
-            <thead>
-                <tr>
-                    {% for col in dataframe.columns %}
-                    
-                    <th style="color: white;">{{ col }}</th>
-                    
-                    {% endfor %}
-                </tr>
-            </thead>
-    
-            <tbody>
-                {% for row in dataframe.values %}
-                <tr>
-                    {% for value in row %}
-
-                    <td style="color: white;">{{ value }}</td>
-                    
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
-        <div>
-            <h2>
-                n: {{n}}
-            </h2>
-            <h2>
-                max: {{max}}
-            </h2>
-            <h2>
-                min: {{min}}
-            </h2>
-            <h2>
-                rango:{{rango}}
-            </h2>
-            <h2>
-                k: {{k}}
-            </h2>
-            <h2>
-                L:{{L}}
-            </h2>
-
+<br><br><br>
+<div class="container inputSection">
+    <div class="row">
+        <div class="col">
+            <div class="text">
+                <h3>Pasos pa usar</h3>
+                <p>Escribir datos separados por espacios</p>
+                <p>Solo numeros enteros o reales</p>
+            </div>
         </div>
-    
+        <div class="col">
+            <form action="/" method="post">
+                <div class="main">
+                    <ul class="cards">
+                      <li class="cards_item">
+                        <div class="card">
+                          <div class="card_image">
+                            <textarea name="datos" id="txt" cols="30" rows="8" placeholder="Escribe aqui"></textarea>
+                            <button type="submit" class="btn btn-success bt">Enviar</button>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                </div>
+                
+            </form>
+        </div>
     </div>
-</section>
-{% endif %}
-
-
+</div>
 {% endblock %}
-
