@@ -30,11 +30,7 @@ table = pd.DataFrame(columns=[
 #datos
 data = []
 
-
-
 #Listas
-
-
 #Frecuencia absoluta
 fabs  = []
 
@@ -52,15 +48,38 @@ marcas = []
 
 @app.route('/' ,methods=["GET", "POST"])
 def index():
+
     if request.method == "GET":
         return render_template("index.html")
     else:
+        #datos
+        data = []
+
+        #Listas
+        #Frecuencia absoluta
+        fabs  = []
+
+        #Frecuencia absoluta acumulada
+        fabsacum  = []
+
+        #Frecuencia relativa
+        frel = []
+
+        #Frecuencia relativa acumulada
+        frelacum = []
+
+        #marcas de clase
+        marcas = []
         # Tomamos el archivo del input
         input = request.form.get("datos")
         # validamos si no esta vacio
         if not input:
             print("\nNo hay datos\n")
             return render_template('index.html')
+        
+        for filename in os.listdir('static'):
+            if filename.endswith(".png"):
+                os.remove(os.path.join('static', filename))
 
         
         valores_separados = input.split()  # Dividir los valores por espacios
@@ -122,34 +141,110 @@ def index():
             #Modificando en valor del límite inferior en cada iteración
 
             linferior = lsuperior
+        images = {}
+    
+
+
+        images = {
+            'polygon': generate_plot(fabsacum, 'polygon',k),
+            'histogram': generate_plot(data, 'histogram',k),
+            'ojiva':generate_plot(fabsacum,'ojiva',k),
+            'bar': generate_plot(data, 'bar', k),
+            #'bar3d': generate_plot(data, 'bar3d', k),
+            'pie': generate_plot(fabs, 'pie', k)
+        }
+ 
+
 
             
         print(table)
-        return render_template('result.html',table=table)
+        return render_template('result.html',table=table, images=images)
 
         
+def generate_plot(data, plot_type,inter):
+    plt.figure(figsize=(8, 6))
+    
+    if plot_type == 'polygon':
+        plt.plot(data, marker='o', linestyle='-', color='b')
+        plt.title('Polígono de Frecuencia')
+        plt.xlabel('Valor')
+        plt.ylabel('Frecuencia')
+    elif plot_type == 'histogram':
+        plt.hist(data, inter, edgecolor='black', alpha=0.7)
+        plt.title('Histograma')
+        plt.xlabel('Valor')
+        plt.ylabel('Frecuencia')
+    elif plot_type == 'ojiva':
+        cumulative_data = np.cumsum(data)
+        print(cumulative_data)
+        plt.plot(np.sort(data), np.linspace(0, len(data), len(data), endpoint=False), marker='o', linestyle='-', color='g')
+        plt.title('Gráfico de Ojiva')
+        plt.xlabel('Valor')
+        plt.ylabel('Frecuencia acumulada')
+    elif plot_type == 'bar':
+        # Gráfico de Barras Normal
+        plt.bar(np.arange(len(data)), data, align='center', alpha=0.7)
+        plt.title('Gráfico de Barras Normal')
+        plt.xlabel('Índice')
+        plt.ylabel('Valor')
+    elif plot_type == 'bar3d':
+        fig = plt.figure(figsize=(8, 6))
+        ax = fig.add_subplot(111, projection='3d')
+        
+        x_pos = np.arange(len(data))
+        y_pos = np.arange(len(data))
+        x_pos, y_pos = np.meshgrid(x_pos, y_pos)
+        x_pos = x_pos.flatten()
+        y_pos = y_pos.flatten()
+        z_pos = np.zeros_like(x_pos)
+        dx = dy = 0.75
+        dz = data
+        
+        ax.bar3d(x_pos, y_pos, z_pos, dx, dy, dz, shade=True)
+        plt.title('Gráfico de Barras 3D')
+        plt.xlabel('Índice')
+        plt.ylabel('Índice')
+    elif plot_type == 'pie':
+        plt.pie(data, labels=range(len(data)), autopct='%1.1f%%', startangle=140)
+        plt.axis('equal')
+        plt.title('Gráfico de Pastel')
 
-
-
-@app.route('/plot')
-def plot():
-    # Crear datos y diagrama de caja
-    data = [np.random.normal(0, std, 100) for std in range(1, 5)]
-    fig, ax = plt.subplots()
-    ax.boxplot(data, vert=True, patch_artist=True)
-    plt.xticks(np.arange(1, len(data) + 1), ['A', 'B', 'C', 'D'])
-    plt.xlabel('Grupos')
-    plt.ylabel('Valores')
-    plt.title('Diagrama de Caja')
-
-    # Convertir el gráfico en una imagen base64
-    img_stream = io.BytesIO()
-    plt.savefig(img_stream, format='png')
-    img_stream.seek(0)
-    img_base64 = base64.b64encode(img_stream.read()).decode('utf-8')
+    
+    image_path = f'static/{plot_type}.png'  # Ruta donde se guardará la imagen
+    plt.savefig(image_path, format='png')
+    
     plt.close()
+    
+    
+    return image_path
 
-    return render_template('plot.html', img_base64=img_base64)
+
+
+def generate_plots(data,inter):
+    plt.figure(figsize=(10, 5))
+    
+    # Polígono de Frecuencia
+    plt.subplot(1, 2, 1)
+    plt.plot(data, marker='o', linestyle='-', color='b')
+    plt.title('Polígono de Frecuencia')
+    plt.xlabel('Índice')
+    plt.ylabel('Valor')
+    
+    # Histograma
+    plt.subplot(1, 2, 2)
+    plt.hist(data, inter ,edgecolor='black', alpha=0.7)
+    plt.title('Histograma')
+    plt.xlabel('Valor')
+    plt.ylabel('Frecuencia')
+    
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    plt.close()
+    
+    buffer.seek(0)
+    image_base64 = base64.b64encode(buffer.read()).decode()
+    
+    return image_base64
 
 
 # Funcion para contar numeros en un rango (Frecuencia absoluta)

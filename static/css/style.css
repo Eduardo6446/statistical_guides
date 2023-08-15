@@ -39,6 +39,7 @@ El estilo va acorde al html de arriba hacia abajo
   bottom: 10px;
   right: 5px;
 }
+
 .card_image {
   height: calc(13*1.2rem);
   padding: 1.2rem 1.2rem 0;
@@ -108,4 +109,7 @@ h2.card_title {
 }
 
 
-
+.img{
+  height: 400px;
+  width: 400px;
+}
