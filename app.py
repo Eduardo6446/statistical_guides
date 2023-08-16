@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')  # Establecer el backend antes de importar pyplot
 
 from math import ceil, floor, log10
 import os
@@ -39,6 +41,7 @@ def index():
         frel = [] #Frecuencia relativa
         frelacum = [] #Frecuencia relativa acumulada
         marcas = [] #marcas de clase
+
 
         input = request.form.get("datos") #Tomamos los datos proporcionados por el usuario
 
