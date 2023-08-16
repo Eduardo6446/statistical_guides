@@ -227,4 +227,5 @@ def freqpor(lista): #Funcion para calcular la freq porcentual / freq porcentual 
 
 
 if __name__ == '__main__':
-    run()
+    app.debug = True
+    app.run()
