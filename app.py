@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')  # Establecer el backend antes de importar pyplot
+from gunicorn.app.wsgiapp import run
 
 from math import ceil, floor, log10
 import os
@@ -226,5 +227,4 @@ def freqpor(lista): #Funcion para calcular la freq porcentual / freq porcentual 
 
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run()
+    run()
