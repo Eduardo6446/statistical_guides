@@ -113,3 +113,16 @@ h2.card_title {
   height: 400px;
   width: 400px;
 }
+
+
+strong{
+  color:#198754;
+  font-size:20px;
+}
+
+li{
+  font-size:18px;
+}
+.spacer{
+  padding-top:30px;
+}

@@ -4,6 +4,8 @@
 <br><br><br>
 
 <div class="container">
+    <h1><i class="fa fa-diamond animated infinite jello" aria-hidden="true"></i>Tabla de Frecuencia</h1>
+
     <table border="1" class="table">
         <thead class="table-success">
             <tr>
@@ -31,10 +33,37 @@
             {% endfor %}
         </tbody>
     </table>
-    
+</div>
 
 
 
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h1><i class="fa fa-diamond animated infinite jello" aria-hidden="true"></i>Datos</h1>
+            <hr>
+            <ul>
+                {% for statistic in list2 %}
+                    <li><strong>{{ statistic[0] }}:</strong> {{ statistic[1] }}</li>
+                {% endfor %}
+            </ul>
+          </div>
+
+      <div class="col-md-6">
+        <h1><i class="fa fa-diamond animated infinite jello" aria-hidden="true"></i>Estadistica Descriptiva</h1>
+        <hr>
+        <ul>
+            {% for statistic in list %}
+                <li><strong>{{ statistic[0] }}:</strong> {{ statistic[1] }}</li>
+            {% endfor %}
+
+            <li><strong>Lista Ordenada:</strong>{{sort_list}}</li>
+        </ul>
+      </div>
+
+
+      
+    </div>
 </div>
 
 <div class="container">
@@ -45,7 +74,9 @@
         <div class="col-sm"><img src="../static/ojiva.png" alt="Histograma" class="img"></div>
         <div class="col-sm"><img src="../static/bar.png" alt="Histograma" class="img"></div>
         <div class="col-sm"><img src="../static/pie.png" alt="Histograma" class="img"></div>
+        <div class="col-sm"><img src="../static/box.png" alt="Histograma" class="img"></div>
     </div>
 </div>
+
 
 {% endblock %}

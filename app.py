@@ -26,26 +26,6 @@ table = pd.DataFrame(columns=[
     'Frecuencia relativa acumulada',
 ])
 
-
-#datos
-data = []
-
-#Listas
-#Frecuencia absoluta
-fabs  = []
-
-#Frecuencia absoluta acumulada
-fabsacum  = []
-
-#Frecuencia relativa
-frel = []
-
-#Frecuencia relativa acumulada
-frelacum = []
-
-#marcas de clase
-marcas = []
-
 @app.route('/' ,methods=["GET", "POST"])
 def index():
 
@@ -151,14 +131,43 @@ def index():
             'ojiva':generate_plot(fabsacum,'ojiva',k),
             'bar': generate_plot(data, 'bar', k),
             #'bar3d': generate_plot(data, 'bar3d', k),
-            'pie': generate_plot(fabs, 'pie', k)
+            'pie': generate_plot(fabs, 'pie', k),
+            'box':generate_plot(data, 'box',k)
         }
- 
+
+        #guia 2
+        mean = np.mean(data)#media aritmetica
+        median = np.median(data)#mediana
+        variance = np.var(data, ddof=1)  # Usar ddof=1 para calcular la varianza muestral
+        std_deviation = np.std(data, ddof=1)  # Usar ddof=1 para calcular la desviación estándar muestral
+
+        q1 = np.percentile(data, 25)#primer cuartil
+        q3 = np.percentile(data, 75)# tercer cuartil
+        interquartile_range = q3 - q1
+        #data.sort()  # Ordenar en forma creciente
+        sorted_data = sorted(data)  # Obtener una nueva lista ordenada
 
 
+        list1 = [
+
+            ("Media Aritmética", mean),
+            ("Mediana", median),
+            ("Varianza Muestral", variance),
+            ("Desviación Estándar Muestral", std_deviation),
+            ("Primer Cuartil", q1),
+            ("Tercer Cuartil", q3),
+            ("Rango Intercuartil", interquartile_range),
+        ]
+
+        list2 = [
+            ("Total de datos", Total),
+            ("Valor minimo", min(data)),
+            ("Valor maximo", max(data)),
+            ("Rango", r),
+        ]
             
         print(table)
-        return render_template('result.html',table=table, images=images)
+        return render_template('result.html',table=table, images=images,list=list1,list2 = list2,sort_list = sorted_data)
 
         
 def generate_plot(data, plot_type,inter):
@@ -208,6 +217,13 @@ def generate_plot(data, plot_type,inter):
         plt.pie(data, labels=range(len(data)), autopct='%1.1f%%', startangle=140)
         plt.axis('equal')
         plt.title('Gráfico de Pastel')
+    elif plot_type == 'box':
+        plt.boxplot(data)
+        plt.title('Diagrama de Caja')
+        plt.ylabel('Valor')
+    elif plot_type == '':
+        print("")
+
 
     
     image_path = f'static/{plot_type}.png'  # Ruta donde se guardará la imagen
@@ -217,34 +233,6 @@ def generate_plot(data, plot_type,inter):
     
     
     return image_path
-
-
-
-def generate_plots(data,inter):
-    plt.figure(figsize=(10, 5))
-    
-    # Polígono de Frecuencia
-    plt.subplot(1, 2, 1)
-    plt.plot(data, marker='o', linestyle='-', color='b')
-    plt.title('Polígono de Frecuencia')
-    plt.xlabel('Índice')
-    plt.ylabel('Valor')
-    
-    # Histograma
-    plt.subplot(1, 2, 2)
-    plt.hist(data, inter ,edgecolor='black', alpha=0.7)
-    plt.title('Histograma')
-    plt.xlabel('Valor')
-    plt.ylabel('Frecuencia')
-    
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    plt.close()
-    
-    buffer.seek(0)
-    image_base64 = base64.b64encode(buffer.read()).decode()
-    
-    return image_base64
 
 
 # Funcion para contar numeros en un rango (Frecuencia absoluta)
