@@ -17,23 +17,23 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-#Se crea un dataframe(estructura bidimensional) para asignar los datos
-table = pd.DataFrame(columns=[
-    'Numero',
-    'Clase',
-    'Marcas de clase',
-    'Frecuencia absoluta',
-    'Frecuencia absoluta acumulada',
-    'Frecuencia relativa',
-    'Frecuencia relativa acumulada',
-])
+
 
 @app.route('/' ,methods=["GET", "POST"])#Pagina Principal con sus metodos
 def index():
-
     if request.method == "GET":
         return render_template("index.html")#Carga la pagina principal
     else:
+        table = pd.DataFrame(columns=[ #Se crea un dataframe(estructura bidimensional) para asignar los datos
+            'Numero',
+            'Clase',
+            'Marcas de clase',
+            'Frecuencia absoluta',
+            'Frecuencia absoluta acumulada',
+            'Frecuencia relativa',
+            'Frecuencia relativa acumulada',
+        ])
+
         #Asignamos las listas, estas estaran al inicio del POST para limpiar sus datos cada refresco de pagina
         data = [] #Este contendrá los datos proporcionados por el usuario
         fabs  = [] #Frecuencia absoluta
