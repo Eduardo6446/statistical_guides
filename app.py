@@ -88,8 +88,8 @@ def index():
             marcas.append((linferior + lsuperior) / 2) #Añadiendo a la lista las marcas de clase
             fabs.append(freqabs (data, linferior, lsuperior)) #Añadiendo a la lista las frecuencias absolutas 
             fabsacum.append(freqabsacum(fabs)) #Añadiendo a la lista Las frecuencias absolutas acumuladas
-            frel.append(freqrel(fabs)) #Añadiendo a la lista Las frecuencias relativas 
-            frelacum.append(freqrel(fabsacum)) #Añadiendo a la lista las frecuencias relativas acumuladas
+            frel.append(freqrel(fabs,Total)) #Añadiendo a la lista Las frecuencias relativas 
+            frelacum.append(freqrel(fabsacum,Total)) #Añadiendo a la lista las frecuencias relativas acumuladas
 
             table.loc[i] = [i,f"[{linferior}, {lsuperior})", (linferior + lsuperior) / 2, freqabs(data, linferior, lsuperior), freqabsacum(fabs), freqrel(fabs,Total), freqrel(fabsacum,Total)] #Añadiendole valores a la tabla
 
