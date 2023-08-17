@@ -41,12 +41,3 @@ Si hay algun error a la hora de ejecutar intente:
 ```python
 python -m flask run
 ```
-## Authors
-
-- [Eduardo Antonio Orozco Corea](https://www.github.com/Eduardo6446)
-
-- Jefry Antonio Ayala Buitrago
-- Jose Luis Campos Rodríguez
-- Norlin Josue Baltodano Palacios
-- Rafael Enrique Pérez Miranda
-
