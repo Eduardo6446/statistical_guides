@@ -106,7 +106,9 @@ def index():
             'ojiva':generate_plot(fabsacum,'ojiva',k), #Grafico de ojiva
             'bar': generate_plot(data, 'bar', k), #Grafico de barras
             'pie': generate_plot(fabs, 'pie', k), #Grafico Pastel
-            'box':generate_plot(data, 'box',k) #Grafico de caja
+            'box':generate_plot(data, 'box',k), #Grafico de caja
+            'boxh':generate_plot(data, 'boxh',k),
+            'pareto':pareto_plot(data)
         }
 
         #Se divivio en dos para mejor orden
@@ -147,7 +149,6 @@ def generate_plot(data, plot_type,inter): #Esta funcion genera los graficos
 
     elif plot_type == 'ojiva': #Ojiva
         cumulative_data = np.cumsum(data)
-        print(cumulative_data)
         plt.plot(np.sort(data), np.linspace(0, len(data), len(data), endpoint=False), marker='o', linestyle='-', color='g')
         # plt.title('Gráfico de Ojiva')
         plt.xlabel('Valor')
@@ -184,6 +185,10 @@ def generate_plot(data, plot_type,inter): #Esta funcion genera los graficos
         plt.boxplot(data)
         # plt.title('Diagrama de Caja')
         plt.ylabel('Valor')
+    elif plot_type == 'boxh': #Grafico de caja
+        plt.boxplot(data,vert=False,notch=True)
+        # plt.title('Diagrama de Caja')
+        plt.ylabel('Valor')
     
     image_path = f'static/{plot_type}.png' #Ruta donde se guardará la imagen
     plt.savefig(image_path, format='png', bbox_inches='tight',pad_inches = 0) #Guardamos la figura con el formato png
@@ -191,6 +196,46 @@ def generate_plot(data, plot_type,inter): #Esta funcion genera los graficos
     
     return image_path
 
+def pareto_plot(dato):
+    plt.figure(figsize=(7, 5)) #Tamaño de la imagen
+    cantidad_datos = len(dato)
+    letras_causas = [chr(65 + i) for i in range(cantidad_datos)]
+
+
+    data1 = {
+    'Categoría': letras_causas,
+    'Frecuencia': dato
+    }
+    df = pd.DataFrame(data1)
+
+    # Ordenar el DataFrame por frecuencia en orden descendente
+    df = df.sort_values(by='Frecuencia', ascending=False)
+
+    # Calcular la frecuencia acumulada
+    df['Frecuencia Acumulada'] = df['Frecuencia'].cumsum()
+
+    # Calcular el porcentaje de contribución
+    total = df['Frecuencia'].sum()
+    df['Porcentaje'] = (df['Frecuencia'] / total) * 100
+
+    # Crear el diagrama de Pareto
+    fig, ax1 = plt.subplots()
+
+    ax1.bar(df['Categoría'], df['Frecuencia'], color='tab:blue')
+    ax1.set_xlabel('Categoría')
+    ax1.set_ylabel('Frecuencia', color='tab:blue')
+
+    ax2 = ax1.twinx()
+    ax2.plot(df['Categoría'], df['Frecuencia Acumulada'], color='tab:red', marker='o')
+    ax2.set_ylabel('Frecuencia Acumulada', color='tab:red')
+
+    plt.xticks(rotation=45)
+
+    image_path = f'static/pareto.png' #Ruta donde se guardará la imagen
+    plt.savefig(image_path, format='png', bbox_inches='tight',pad_inches = 0) #Guardamos la figura con el formato png
+    plt.close() #Cerramos
+    
+    return image_path
 
 # Funcion para contar numeros en un rango (Frecuencia absoluta)
 
