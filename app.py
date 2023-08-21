@@ -123,25 +123,25 @@ def index():
 
         list2 = [ #diccionario de la guia 1
             ("Total de datos", Total),
-            ("Valor minimo", min(data)),
-            ("Valor maximo", max(data)),
+            ("Valor mínimo", min(data)),
+            ("Valor máximo", max(data)),
             ("Rango", r),
         ]            
         return render_template('result.html',table=table, images=images,list=list1,list2 = list2,sort_list = sorted_data)
 
         
 def generate_plot(data, plot_type,inter): #Esta funcion genera los graficos
-    plt.figure(figsize=(8, 6)) #Tamaño de la imagen
+    plt.figure(figsize=(7, 5)) #Tamaño de la imagen
     
     if plot_type == 'polygon': #Poligono de frecuencia
         plt.plot(data, marker='o', linestyle='-', color='b')
-        plt.title('Polígono de Frecuencia')
+        # plt.title('Polígono de Frecuencia')
         plt.xlabel('Valor')
         plt.ylabel('Frecuencia')
 
     elif plot_type == 'histogram': #Historigrama
         plt.hist(data, inter, edgecolor='black', alpha=0.7)
-        plt.title('Histograma')
+        # plt.title('Histograma')
         plt.xlabel('Valor')
         plt.ylabel('Frecuencia')
 
@@ -149,13 +149,13 @@ def generate_plot(data, plot_type,inter): #Esta funcion genera los graficos
         cumulative_data = np.cumsum(data)
         print(cumulative_data)
         plt.plot(np.sort(data), np.linspace(0, len(data), len(data), endpoint=False), marker='o', linestyle='-', color='g')
-        plt.title('Gráfico de Ojiva')
+        # plt.title('Gráfico de Ojiva')
         plt.xlabel('Valor')
         plt.ylabel('Frecuencia acumulada')
 
     elif plot_type == 'bar': #Gráfico de Barras Normal
         plt.bar(np.arange(len(data)), data, align='center', alpha=0.7)
-        plt.title('Gráfico de Barras Normal')
+        # plt.title('Gráfico de Barras Normal')
         plt.xlabel('Índice')
         plt.ylabel('Valor')
 
@@ -171,22 +171,22 @@ def generate_plot(data, plot_type,inter): #Esta funcion genera los graficos
         dx = dy = 0.75
         dz = data
         ax.bar3d(x_pos, y_pos, z_pos, dx, dy, dz, shade=True)
-        plt.title('Gráfico de Barras 3D')
+        # plt.title('Gráfico de Barras 3D')
         plt.xlabel('Índice')
         plt.ylabel('Índice')
 
     elif plot_type == 'pie': #Grafico pastel
         plt.pie(data, labels=range(len(data)), autopct='%1.1f%%', startangle=140)
         plt.axis('equal')
-        plt.title('Gráfico de Pastel')
+        # plt.title('Gráfico de Pastel')
 
     elif plot_type == 'box': #Grafico de caja
         plt.boxplot(data)
-        plt.title('Diagrama de Caja')
+        # plt.title('Diagrama de Caja')
         plt.ylabel('Valor')
     
     image_path = f'static/{plot_type}.png' #Ruta donde se guardará la imagen
-    plt.savefig(image_path, format='png') #Guardamos la figura con el formato png
+    plt.savefig(image_path, format='png', bbox_inches='tight',pad_inches = 0) #Guardamos la figura con el formato png
     plt.close() #Cerramos
     
     return image_path
